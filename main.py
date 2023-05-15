@@ -24,20 +24,22 @@ def intersect(p1, q1, p2, q2):
     o4 = orientation(p2, q2, q1)
 
     # Sprawdzanie przypadków, w których odcinki się przecinają
-    if o1 != o2 and o3 != o4:
-        return True, (p1, q1) if on_segment(p1, p2, q1) else (p1, q2)
+    # if o1 != o2 and o3 != o4:
+    #     return True, (p1, q1) if on_segment(p1, p2, q1) else (p1, q2)
 
     # Przypadki szczególne dla współliniowych odcinków
-    if o1 == 0 and on_segment(p1, p2, q1):
-        return True, (p1, q1)
-    if o2 == 0 and on_segment(p1, q2, q1):
-        return True, (p1, q1)
-    if o3 == 0 and on_segment(p2, p1, q2):
-        return True, (p2, q2)
-    if o4 == 0 and on_segment(p2, q1, q2):
-        return True, (p2, q2)
+    if o1 != o2 and o3 != o4:
+        if on_segment(p1, p2, q1):
+            return True, (p1, q1)
+        elif on_segment(p1, q2, q1):
+            return True, (p1, q1)
+        elif on_segment(p2, p1, q2):
+            return True, (p2, q2)
+        elif on_segment(p2, q1, q2):
+            return True, (p2, q2)
+    else:
+        return False, None
 
-    return False, None
 
 
 def check_intersection():
@@ -62,6 +64,7 @@ def check_intersection():
             intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
 
         # Wykres z odcinkami
+        
         fig, ax = plt.subplots()
         ax.plot([p1_x, q1_x], [p1_y, q1_y], 'b', label='Odcinek 1')
         ax.plot([p2_x, q2_x], [p2_y, q2_y], 'g', label='Odcinek 2')
@@ -79,7 +82,6 @@ def check_intersection():
         canvas = FigureCanvasTkAgg(fig, master=graph_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
         graph_frame.pack()
     else:
         result_label.config(text="Odcinki nie przecinają się.")
