@@ -23,10 +23,6 @@ def intersect(p1, q1, p2, q2):
     o3 = orientation(p2, q2, p1)
     o4 = orientation(p2, q2, q1)
 
-    # Sprawdzanie przypadków, w których odcinki się przecinają
-    # if o1 != o2 and o3 != o4:
-    #     return True, (p1, q1) if on_segment(p1, p2, q1) else (p1, q2)
-
     # Przypadki szczególne dla współliniowych odcinków
     if o1 != o2 and o3 != o4:
         if on_segment(p1, p2, q1):
