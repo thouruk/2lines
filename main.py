@@ -23,18 +23,39 @@ def intersect(p1, q1, p2, q2):
     o3 = orientation(p2, q2, p1)
     o4 = orientation(p2, q2, q1)
 
-    # Przypadki szczególne dla współliniowych odcinków
+    # Sprawdzanie przypadków, w których odcinki się przecinają
     if o1 != o2 and o3 != o4:
-        if on_segment(p1, p2, q1):
-            return True, (p1, q1)
-        elif on_segment(p1, q2, q1):
-            return True, (p1, q1)
-        elif on_segment(p2, p1, q2):
-            return True, (p2, q2)
-        elif on_segment(p2, q1, q2):
-            return True, (p2, q2)
-    else:
-        return False, None
+        intersection = calculate_intersection(p1, q1, p2, q2)
+        if intersection is not None:
+            return True, intersection
+
+    # Przypadki szczególne dla współliniowych odcinków
+    if o1 == 0 and on_segment(p1, p2, q1):
+        return True, calculate_intersection(p1, q1, p2, q2)
+    if o2 == 0 and on_segment(p1, q2, q1):
+        return True, calculate_intersection(p1, q1, p2, q2)
+    if o3 == 0 and on_segment(p2, p1, q2):
+        return True, calculate_intersection(p1, q1, p2, q2)
+    if o4 == 0 and on_segment(p2, q1, q2):
+        return True, calculate_intersection(p1, q1, p2, q2)
+
+    return False, None
+
+
+def calculate_intersection(p1, q1, p2, q2):
+    # Obliczanie punktu przecięcia dwóch odcinków
+    x_diff = (p1[0] - q1[0], p2[0] - q2[0])
+    y_diff = (p1[1] - q1[1], p2[1] - q2[1])
+
+    div = x_diff[0] * y_diff[1] - x_diff[1] * y_diff[0]
+    if div == 0:
+        return None  # Odcinki są równoległe
+
+    d = (p1[0] * q1[1] - p1[1] * q1[0], p2[0] * q2[1] - p2[1] * q2[0])
+    x = (d[0] * x_diff[1] - d[1] * x_diff[0]) / div
+    y = (d[0] * y_diff[1] - d[1] * y_diff[0]) / div
+
+    return x, y
 
 
 
