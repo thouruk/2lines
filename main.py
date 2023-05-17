@@ -29,17 +29,18 @@ def intersect(p1, q1, p2, q2):
         if intersection is not None:
             return True, intersection
 
-    # Przypadki szczególne dla współliniowych odcinków
+    # Przypadki szczególne dla współliniowych odcinkówa czy 
     if o1 == 0 and on_segment(p1, p2, q1):
-        return True, calculate_intersection(p1, q1, p2, q2)
+        return True, (p2, q1) if p1 != q1 else p1
     if o2 == 0 and on_segment(p1, q2, q1):
-        return True, calculate_intersection(p1, q1, p2, q2)
+        return True, (q2, q1) if p1 != q1 else p1
     if o3 == 0 and on_segment(p2, p1, q2):
-        return True, calculate_intersection(p1, q1, p2, q2)
+        return True, (p1, q2) if p2 != q2 else p2
     if o4 == 0 and on_segment(p2, q1, q2):
-        return True, calculate_intersection(p1, q1, p2, q2)
+        return True, (q1, q2) if p2 != q2 else p2
 
     return False, None
+
 
 
 def calculate_intersection(p1, q1, p2, q2):
@@ -76,9 +77,9 @@ def check_intersection():
     if intersecting:
         result_label.config(text="Odcinki przecinają się.")
         if isinstance(intersection, tuple):
-            intersection_label.config(text="Przecięcie to odcinek o końcach: {}".format(intersection))
-        else:
             intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
+        else:
+            intersection_label.config(text="Przecięcie to odcinek o końcach: {}".format(intersection))
 
         # Wykres z odcinkami
         
@@ -104,6 +105,7 @@ def check_intersection():
         result_label.config(text="Odcinki nie przecinają się.")
         intersection_label.config(text="")
         graph_frame.pack_forget()  # Ukrycie wykresu
+
 
 
 # Tworzenie interfejsu Tkinter
