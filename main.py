@@ -77,12 +77,14 @@ def check_intersection():
     if intersecting:
         result_label.config(text="Odcinki przecinają się.")
         if isinstance(intersection, tuple):
-            intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
+            if intersection[0] != intersection[1]:
+                intersection_label.config(text="Przecięcie to odcinek o końcach: {}".format(intersection))
+            else:
+                intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection[0]))
         else:
-            intersection_label.config(text="Przecięcie to odcinek o końcach: {}".format(intersection))
+            intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
 
         # Wykres z odcinkami
-        
         fig, ax = plt.subplots()
         ax.plot([p1_x, q1_x], [p1_y, q1_y], 'b', label='Odcinek 1')
         ax.plot([p2_x, q2_x], [p2_y, q2_y], 'g', label='Odcinek 2')
