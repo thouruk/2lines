@@ -24,20 +24,16 @@ def intersect(p1, q1, p2, q2):
     o4 = orientation(p2, q2, q1)
 
     # Sprawdzanie przypadków, w których odcinki się przecinają
-    if o1 != o2 and o3 != o4:
+    if (o1 > 0 and o2 < 0 or o1 < 0 and o2 > 0) and (o3 > 0 and o4 < 0 or o3 < 0 and o4 > 0):
         intersection = calculate_intersection(p1, q1, p2, q2)
         if intersection is not None:
             return True, intersection
 
-    # Przypadki szczególne dla współliniowych odcinkówa czy 
-    if o1 == 0 and on_segment(p1, p2, q1):
-        return True, (p2, q1) if p1 != q1 else p1
-    if o2 == 0 and on_segment(p1, q2, q1):
-        return True, (q2, q1) if p1 != q1 else p1
-    if o3 == 0 and on_segment(p2, p1, q2):
-        return True, (p1, q2) if p2 != q2 else p2
-    if o4 == 0 and on_segment(p2, q1, q2):
-        return True, (q1, q2) if p2 != q2 else p2
+    # Przypadek równoległych odcinków
+    if o1 == 0 and o2 == 0 and o3 == 0 and o4 == 0:
+        # Sprawdzanie pokrywania się odcinków
+        if on_segment(p1, p2, q1) or on_segment(p1, q2, q1) or on_segment(p2, p1, q2) or on_segment(p2, q1, q2):
+            return True, "Odcinki pokrywają się"
 
     return False, None
 
@@ -75,15 +71,20 @@ def check_intersection():
     intersecting, intersection = intersect((p1_x, p1_y), (q1_x, q1_y), (p2_x, p2_y), (q2_x, q2_y))
 
     if intersecting:
-        result_label.config(text="Odcinki przecinają się.")
         if isinstance(intersection, tuple):
             if intersection[0] != intersection[1]:
+                result_label.config(text="Odcinki przecinają się.")
                 intersection_label.config(text="Przecięcie to odcinek o końcach: {}".format(intersection))
             else:
-                intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection[0]))
+                if (p1_x, p1_y) == intersection or (q1_x, q1_y) == intersection or (p2_x, p2_y) == intersection or (q2_x, q2_y) == intersection:
+                    result_label.config(text="Odcinki przecinają się w końcu odcinka.")
+                    intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
+                else:
+                    result_label.config(text="Odcinki przecinają się wewnątrz.")
+                    intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
         else:
+            result_label.config(text="Odcinki przecinają się.")
             intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
-
         # Wykres z odcinkami
         fig, ax = plt.subplots()
         ax.plot([p1_x, q1_x], [p1_y, q1_y], 'b', label='Odcinek 1')
