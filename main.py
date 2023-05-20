@@ -33,11 +33,29 @@ def intersect(p1, q1, p2, q2):
     if o1 == 0 and o2 == 0 and o3 == 0 and o4 == 0:
         # Sprawdzanie pokrywania się odcinków
         if on_segment(p1, p2, q1) or on_segment(p1, q2, q1) or on_segment(p2, p1, q2) or on_segment(p2, q1, q2):
-            return True, "Odcinki pokrywają się"
+            intersection = find_overlap(p1, q1, p2, q2)
+            if intersection is not None:
+                return True, intersection
+            
+    elif p1 == p2:
+        return True, p1
 
+    elif q1 == q2:
+        return True, q1
+    
     return False, None
 
-
+def find_overlap(p1, q1, p2, q2):
+    # Sprawdzenie i obliczenie odcinka pokrycia
+    if on_segment(p1, p2, q1):
+        return p2, q1
+    if on_segment(p1, q2, q1):
+        return q2, q1
+    if on_segment(p2, p1, q2):
+        return p1, q2
+    if on_segment(p2, q1, q2):
+        return q1, q2
+    return None
 
 def calculate_intersection(p1, q1, p2, q2):
     # Obliczanie punktu przecięcia dwóch odcinków
@@ -77,7 +95,7 @@ def check_intersection():
                 intersection_label.config(text="Przecięcie to odcinek o końcach: {}".format(intersection))
             else:
                 if (p1_x, p1_y) == intersection or (q1_x, q1_y) == intersection or (p2_x, p2_y) == intersection or (q2_x, q2_y) == intersection:
-                    result_label.config(text="Odcinki przecinają się w końcu odcinka.")
+                    result_label.config(text="Odcinki przecinają się.")
                     intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
                 else:
                     result_label.config(text="Odcinki przecinają się wewnątrz.")
