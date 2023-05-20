@@ -42,6 +42,22 @@ def intersect(p1, q1, p2, q2):
 
     elif q1 == q2:
         return True, q1
+
+    elif on_segment(p1, p2, q2):
+        return True, p2
+
+    # Sprawdzanie przypadku, gdy koniec odcinka znajduje się na drugim odcinku
+    elif on_segment(p1, q2, q1):
+        return True, q2
+
+    # Sprawdzanie przypadku, gdy początek drugiego odcinka znajduje się na pierwszym odcinku
+    elif on_segment(p2, p1, q1):
+        return True, p1
+
+    # Sprawdzanie przypadku, gdy koniec drugiego odcinka znajduje się na pierwszym odcinku
+    elif on_segment(p2, q1, q2):
+        return True, q1
+
     
     return False, None
 
