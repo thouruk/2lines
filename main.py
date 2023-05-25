@@ -10,6 +10,10 @@ def orientation(p, q, r):
     # wartość zero, jeśli punkty są współliniowe.
     return (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
 
+def clear_window():
+    # Funkcja do usuwania poprzedniej zawartości okna
+    for widget in graph_frame.winfo_children():
+        widget.destroy()
 
 def on_segment(p, q, r):
     # Funkcja pomocnicza sprawdzająca, czy punkt q leży na odcinku p-r
@@ -36,29 +40,31 @@ def intersect(p1, q1, p2, q2):
             intersection = find_overlap(p1, q1, p2, q2)
             if intersection is not None:
                 return True, intersection
-            
-    elif p1 == p2:
-        return True, p1
 
-    elif q1 == q2:
-        return True, q1
+        # Sprawdzanie przypadku, gdy odcinki zaczynają się w tym samym punkcie
+        if p1 == p2:
+            return True, p1
 
-    elif on_segment(p1, p2, q2):
-        return True, p2
+        # Sprawdzanie przypadku, gdy odcinki kończą się w tym samym punkcie
+        if q1 == q2:
+            return True, q1
 
-    # Sprawdzanie przypadku, gdy koniec odcinka znajduje się na drugim odcinku
-    elif on_segment(p1, q2, q1):
-        return True, q2
+        # Sprawdzanie przypadku, gdy początek odcinka znajduje się na drugim odcinku
+        if on_segment(p1, p2, q2):
+            return True, p2
 
-    # Sprawdzanie przypadku, gdy początek drugiego odcinka znajduje się na pierwszym odcinku
-    elif on_segment(p2, p1, q1):
-        return True, p1
+        # Sprawdzanie przypadku, gdy koniec odcinka znajduje się na drugim odcinku
+        if on_segment(p1, q2, q1):
+            return True, q2
 
-    # Sprawdzanie przypadku, gdy koniec drugiego odcinka znajduje się na pierwszym odcinku
-    elif on_segment(p2, q1, q2):
-        return True, q1
+        # Sprawdzanie przypadku, gdy początek drugiego odcinka znajduje się na pierwszym odcinku
+        if on_segment(p2, p1, q1):
+            return True, p1
 
-    
+        # Sprawdzanie przypadku, gdy koniec drugiego odcinka znajduje się na pierwszym odcinku
+        if on_segment(p2, q1, q2):
+            return True, q1
+
     return False, None
 
 def find_overlap(p1, q1, p2, q2):
@@ -100,6 +106,8 @@ def check_intersection():
     p2_y = float(entry_p2_y.get())
     q2_x = float(entry_q2_x.get())
     q2_y = float(entry_q2_y.get())
+
+    clear_window()
 
     # Wywołanie funkcji intersect i wyświetlenie wyników
     intersecting, intersection = intersect((p1_x, p1_y), (q1_x, q1_y), (p2_x, p2_y), (q2_x, q2_y))
