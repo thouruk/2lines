@@ -17,7 +17,10 @@ def clear_window():
 
 def on_segment(p, q, r):
     # Funkcja pomocnicza sprawdzająca, czy punkt q leży na odcinku p-r
-    return min(p[0], r[0]) <= q[0] <= max(p[0], r[0]) and min(p[1], r[1]) <= q[1] <= max(p[1], r[1])
+    if orientation(p, q, r) == 0:
+        return min(p[0], r[0]) <= q[0] <= max(p[0], r[0]) and min(p[1], r[1]) <= q[1] <= max(p[1], r[1])
+    else:
+        return False
 
 
 def intersect(p1, q1, p2, q2):
@@ -41,43 +44,33 @@ def intersect(p1, q1, p2, q2):
             if intersection is not None:
                 return True, intersection
 
-        # Sprawdzanie przypadku, gdy odcinki zaczynają się w tym samym punkcie
-        if p1 == p2:
-            return True, p1
+    # Sprawdzanie przypadku, gdy początek odcinka znajduje się na drugim odcinku
+    if on_segment(p2, p1, q2):
+        return True, p1
 
-        # Sprawdzanie przypadku, gdy odcinki kończą się w tym samym punkcie
-        if q1 == q2:
-            return True, q1
-
-        # Sprawdzanie przypadku, gdy początek odcinka znajduje się na drugim odcinku
-        if on_segment(p1, p2, q2):
-            return True, p2
-
-        # Sprawdzanie przypadku, gdy koniec odcinka znajduje się na drugim odcinku
-        if on_segment(p1, q2, q1):
-            return True, q2
-
-        # Sprawdzanie przypadku, gdy początek drugiego odcinka znajduje się na pierwszym odcinku
-        if on_segment(p2, p1, q1):
-            return True, p1
-
-        # Sprawdzanie przypadku, gdy koniec drugiego odcinka znajduje się na pierwszym odcinku
-        if on_segment(p2, q1, q2):
-            return True, q1
+    # Sprawdzanie przypadku, gdy koniec odcinka znajduje się na drugim odcinku
+    if on_segment(p2, q1, q2):
+        return True, q1
+    # Sprawdzanie przypadku, gdy początek drugiego odcinka znajduje się na pierwszym odcinku
+    if on_segment(p1, p2, q1):
+        return True, p2
+    # Sprawdzanie przypadku, gdy koniec drugiego odcinka znajduje się na pierwszym odcinku
+    if on_segment(p1, q2, q1):
+        return True, q2
 
     return False, None
 
 def find_overlap(p1, q1, p2, q2):
-    # Sprawdzenie i obliczenie odcinka pokrycia
-    if on_segment(p1, p2, q1):
-        return p2, q1
-    if on_segment(p1, q2, q1):
-        return q2, q1
-    if on_segment(p2, p1, q2):
-        return p1, q2
-    if on_segment(p2, q1, q2):
-        return q1, q2
-    return None
+    # Sort the points in ascending order
+    points = sorted([p1, q1, p2, q2])
+
+    # Check for overlapping segments
+    if points[1] != points[2]:
+        return points[1], points[2]
+    else:
+        return None
+
+
 
 def calculate_intersection(p1, q1, p2, q2):
     # Obliczanie punktu przecięcia dwóch odcinków
@@ -127,30 +120,30 @@ def check_intersection():
         else:
             result_label.config(text="Odcinki przecinają się.")
             intersection_label.config(text="Przecięcie to punkt o współrzędnych: {}".format(intersection))
-        # Wykres z odcinkami
-        fig, ax = plt.subplots()
-        ax.plot([p1_x, q1_x], [p1_y, q1_y], 'b', label='Odcinek 1')
-        ax.plot([p2_x, q2_x], [p2_y, q2_y], 'g', label='Odcinek 2')
-
-        # Dodanie układu współrzędnych
-        ax.axhline(0, color='black', linewidth=0.5)
-        ax.axvline(0, color='black', linewidth=0.5)
-
-        # Skala osi
-        ax.set_aspect('equal', adjustable='box')
-
-        # Legenda
-        ax.legend()
-
-        canvas = FigureCanvasTkAgg(fig, master=graph_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        graph_frame.pack()
     else:
         result_label.config(text="Odcinki nie przecinają się.")
         intersection_label.config(text="")
         graph_frame.pack_forget()  # Ukrycie wykresu
-
+    # Wykres z odcinkami
+    fig, ax = plt.subplots()
+    ax.plot([p1_x, q1_x], [p1_y, q1_y], 'b', label='Odcinek 1')
+    ax.plot([p2_x, q2_x], [p2_y, q2_y], 'g', label='Odcinek 2')
+    # Dodanie układu współrzędnych
+    ax.axhline(0, color='black', linewidth=0.5)
+    ax.axvline(0, color='black', linewidth=0.5)
+    # Pokazanie końców odcinków na czerwono
+    ax.plot(p1_x, p1_y, 'ko', label='Punkt P1', markersize=4)
+    ax.plot(q1_x, q1_y, 'ko', label='Punkt Q1', markersize=4)
+    ax.plot(p2_x, p2_y, 'ro', label='Punkt P2', markersize=4)
+    ax.plot(q2_x, q2_y, 'ro', label='Punkt Q2', markersize=4)
+    # Skala osi
+    ax.set_aspect('equal', adjustable='box')
+    # Legenda
+    ax.legend()
+    canvas = FigureCanvasTkAgg(fig, master=graph_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    graph_frame.pack()
 
 
 # Tworzenie interfejsu Tkinter
@@ -207,4 +200,3 @@ intersection_label.pack()
 graph_frame = tk.Frame(root)
 
 root.mainloop()
-
